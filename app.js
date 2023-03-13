@@ -15,7 +15,7 @@ const app = express()
 const port = process.env.SERVER_PORT || 8000
 
 app.use(express.json())
-require("./app/routers/user.router")(app)
+require("./app/routers/auth.router")(app)
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
