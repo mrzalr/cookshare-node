@@ -1,39 +1,26 @@
-const db = require("../models/model")
-const User = db.UserModel
+const response = require("../models/response.model")
+const user = require("../models/user.model")
 
-const createUser = async (req, res) => {
-  console.log(req.body)
-  if(req.body.username === null || req.body.email === null || req.body.password === null){
-    res.status(400).json({
-      status : 400,
-      message : "bad request",
-      errors : ["username, email, password shouldn't be null"],
-      data : null
-    })
+const userModel = user.model()
+const userValidator = user.validator
+
+exports.createUser = async (req, res) => {
+  const validationErrs = userValidator(req.body)
+  if(validationErrs.length > 0) {
+    response.statusBadRequest(res, validationErrs)
+    return
   }
 
-  const user  = new User({
-    username : req.body.username,
-    email : req.body.email,
-    password : req.body.password
-  })
-
+  const {username, email, password} = req.body
   try{
-    const userResponse = await User.save()
-    res.status(201).json({
-      status : 201,
-      message : "created",
-      errors : [],
-      data : userResponse
+    const userResponse = await userModel.create({
+      username,
+      email,
+      password
     })
-  } catch(error){
-    res.status(500).json({
-      status : 500,
-      message : "bad gateway",
-      errors : [ errors.message || "error when inserting new data" ],
-      data : null
-    })
+    
+    response.statusCreated(res, userResponse)
+  }catch(error){
+    response.statusBadGateway(res, [error.message])
   }
 }
-
-module.exports = { createUser }

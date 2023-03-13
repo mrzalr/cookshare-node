@@ -1,12 +1,20 @@
-module.exports = mongoose => {
-  const UserSchema = mongoose.Schema({
+const mongoose = require("mongoose")
+
+const model = () => {
+  const userSchema = mongoose.Schema({
     username : {
       type : String,
-      required : true
+      required : true,
+      index : {
+        unique : true
+      }
     },
     email : {
       type : String,
-      required : true
+      required : true,
+      index : {
+        unique : true
+      }
     },
     password : {
       type : String,
@@ -14,5 +22,30 @@ module.exports = mongoose => {
     }
   }, { timestamps : true })
 
-  return mongoose.model("user", UserSchema)
+  userSchema.method("toJSON", function(){
+    const {__v, _id, ...object} = this.toObject()
+    return { id : _id, ...object}
+  })
+
+  return mongoose.model("user", userSchema)
+}
+
+const validator = body => {
+  const validationErrs = []
+  if(body.username === undefined || body.username === ""){
+    validationErrs.push("username should not be empty")
+  }
+  if(body.email === undefined || body.email === ""){
+    validationErrs.push("email should not be empty")
+  }
+  if(body.password === undefined || body.password === ""){
+    validationErrs.push("password should not be empty")
+  }
+
+  return validationErrs
+}
+
+module.exports = {
+  model : model,
+  validator : validator
 }
