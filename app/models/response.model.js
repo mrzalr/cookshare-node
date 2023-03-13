@@ -43,3 +43,12 @@ exports.statusUnauthorized = (res, errors) => {
         data : null
     })
 }
+
+exports.statusNotFound = (res, errors) => {
+    res.status(404).json({
+        status : 404,
+        message : "not found",
+        errors : errors,
+        data : null
+    })
+}

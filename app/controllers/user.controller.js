@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
 
     const userResponse = foundUser.toJSON()
     userResponse.token = jwt.sign(
-      {user_id : userResponse.id},
+      {userID : userResponse.id},
       process.env.JWT_SECRETKEY,
       {algorithm: "HS256", expiresIn: "1d"},
     )
@@ -61,5 +61,48 @@ exports.login = async (req, res) => {
     response.statusOk(res, userResponse)
   } catch(error){
     response.statusBadGateway(res, [error.message || "some errors occurred when trying to log in"])
+  }
+}
+
+exports.getUserByID = async (req, res) => {
+  try{
+    const foundUser = await userModel.findById(req.params.id)
+    if(!foundUser){
+      response.statusNotFound(res, [`user with id ${req.params.id} not found`])
+      return
+    }
+
+    response.statusOk(res, foundUser.toJSON())
+  } catch(error) {
+    response.statusBadGateway(res, [error.message || "some errors occurred when trying to get user"])
+  }
+}
+
+exports.updateUser = async (req, res) => {
+  try{
+    const updatedUser = req.body
+    const salt = await bcrypt.genSalt(10)
+    const hashed = await bcrypt.hash(updatedUser.password, salt)
+    updatedUser.password = hashed
+
+    const foundUser = await userModel.findOneAndUpdate(
+      {_id : req.userID},
+      {$set : updatedUser},
+      {new : true}
+    )
+
+    response.statusOk(res, foundUser.toJSON())
+  } catch(error) {
+    response.statusBadGateway(res, [error.message || "some errors occurred when trying to get user"])
+  }
+}
+
+exports.deleteUser = async (req, res) => {
+  try{
+    const foundUser = await userModel.findOneAndDelete({_id : req.userID})
+
+    response.statusOk(res, `user with id ${req.userID} successfully deleted`)
+  } catch(error) {
+    response.statusBadGateway(res, [error.message || "some errors occurred when trying to get user"])
   }
 }
