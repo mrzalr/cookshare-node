@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken")
 const response = require("../models/response.model")
 const user = require("../models/user.model")
 
-const userModel = user.model()
+const userModel = user.model
 const userValidator = user.validator
 
 exports.register = async (req, res) => {
@@ -104,5 +104,20 @@ exports.deleteUser = async (req, res) => {
     response.statusOk(res, `user with id ${req.userID} successfully deleted`)
   } catch(error) {
     response.statusBadGateway(res, [error.message || "some errors occurred when trying to get user"])
+  }
+}
+
+exports.getUserRecipes = async (req, res) => {
+  try{
+    const foundUser = await userModel.findById(req.params.id).populate("recipes")
+
+    if(!foundUser) {
+      response.statusNotFound(res, `user with id ${req.params.id} not found`)
+      return   
+    }
+
+    response.statusOk(res, foundUser)
+  } catch(error) {
+    response.statusBadGateway(res, error.message || "some errors occurred when trying to get recipes")
   }
 }

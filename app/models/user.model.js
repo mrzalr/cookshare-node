@@ -1,34 +1,34 @@
 const mongoose = require("mongoose")
 
-const model = () => {
-  const userSchema = mongoose.Schema({
-    username : {
-      type : String,
-      required : true,
-      index : {
-        unique : true
-      }
-    },
-    email : {
-      type : String,
-      required : true,
-      index : {
-        unique : true
-      }
-    },
-    password : {
-      type : String,
-      required : true
+const userSchema = mongoose.Schema({
+  username : {
+    type : String,
+    required : true,
+    index : {
+      unique : true
     }
-  }, { timestamps : true })
+  },
+  email : {
+    type : String,
+    required : true,
+    index : {
+      unique : true
+    }
+  },
+  password : {
+    type : String,
+    required : true
+  },
+  recipes : [{
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Recipe"
+  }]
+}, { timestamps : true })
 
-  userSchema.method("toJSON", function(){
-    const {__v, _id, password,  ...object} = this.toObject()
-    return { id : _id, ...object}
-  })
-
-  return mongoose.model("user", userSchema)
-}
+userSchema.method("toJSON", function(){
+  const {__v, _id, password,  ...object} = this.toObject()
+  return { id : _id, ...object}
+})
 
 const register = body => {
   const validationErrs = []
@@ -58,7 +58,7 @@ const login = body => {
 }
 
 module.exports = {
-  model : model,
+  model : mongoose.model("User", userSchema),
   validator : {
     register,
     login
