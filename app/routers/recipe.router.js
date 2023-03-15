@@ -6,6 +6,10 @@ const authMiddleware = require("../middlewares/auth.middleware")
 module.exports = app => {
   const router = express.Router()
   router.post("", authMiddleware.verifyToken, recipeController.addRecipe)
+  router.get("", recipeController.getRecipes)
+  router.get("/:id", recipeController.getRecipeByID)
+  router.patch("/:id", authMiddleware.verifyToken, recipeController.updateRecipe)
+  router.delete("/:id",authMiddleware.verifyToken, recipeController.deleteRecipe)
 
-  app.use("/api/v1/recipe", router)
+  app.use("/api/v1/recipes", router)
 }

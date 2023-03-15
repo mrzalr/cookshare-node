@@ -9,5 +9,5 @@ module.exports = app => {
   router.patch("", authMiddleware.verifyToken, userController.updateUser)
   router.delete("", authMiddleware.verifyToken, userController.deleteUser)
 
-  app.use("/api/v1/user", router)
+  app.use("/api/v1/users", router)
 }

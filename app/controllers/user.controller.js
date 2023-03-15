@@ -109,7 +109,7 @@ exports.deleteUser = async (req, res) => {
 
 exports.getUserRecipes = async (req, res) => {
   try{
-    const foundUser = await userModel.findById(req.params.id).populate("recipes")
+    const foundUser = await userModel.findById(req.params.id).populate("recipes", ["title", "description"])
 
     if(!foundUser) {
       response.statusNotFound(res, `user with id ${req.params.id} not found`)

@@ -52,3 +52,12 @@ exports.statusNotFound = (res, errors) => {
         data : null
     })
 }
+
+exports.statusForbidden = (res, errors) => {
+  res.status(403).json({
+      status : 403,
+      message : "forbidden",
+      errors : errors,
+      data : null
+  })
+}
