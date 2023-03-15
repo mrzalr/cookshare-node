@@ -61,3 +61,12 @@ exports.statusForbidden = (res, errors) => {
       data : null
   })
 }
+
+exports.statusUnprocessable = (res, errors) => {
+  res.status(422).json({
+      status : 422,
+      message : "unprocessable content",
+      errors : errors,
+      data : null
+  })
+}

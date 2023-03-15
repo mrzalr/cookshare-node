@@ -9,9 +9,12 @@ const recipeSchema = mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "User"
   },
-  imageUrl : {
-    type : String,
-  },
+  images : [
+    {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Image"
+    }
+  ],
   portion : {
     type : Number,
     required : true,
@@ -41,7 +44,7 @@ const recipeSchema = mongoose.Schema({
 }, { timestamps : true })
 
 recipeSchema.method("toJSON", function(){
-  const {__v, _id, password,  ...object} = this.toObject()
+  const {__v, _id, ...object} = this.toObject()
   return { id : _id, ...object}
 })
 

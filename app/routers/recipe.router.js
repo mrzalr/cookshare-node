@@ -10,6 +10,7 @@ module.exports = app => {
   router.get("/:id", recipeController.getRecipeByID)
   router.patch("/:id", authMiddleware.verifyToken, recipeController.updateRecipe)
   router.delete("/:id",authMiddleware.verifyToken, recipeController.deleteRecipe)
+  router.post("/:id/images/upload", recipeController.uploadImage)
 
   app.use("/api/v1/recipes", router)
 }
