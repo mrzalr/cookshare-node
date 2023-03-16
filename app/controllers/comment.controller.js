@@ -37,6 +37,7 @@ exports.updateComment = async (req, res) => {
     const foundComment = await commentModel.findById(req.params.commentId)
     if(!foundComment){
       response.statusNotFound(res, [`comment with id ${req.params.commentId} not found`])
+      return
     }
 
     if(req.userID != foundComment.user){
@@ -57,6 +58,7 @@ exports.deleteComment = async (req, res) => {
     const foundComment = await commentModel.findById(req.params.commentId)
     if(!foundComment){
       response.statusNotFound(res, [`comment with id ${req.params.commentId} not found`])
+      return
     }
 
     const foundRecipe = await recipeModel.findById(req.params.id)
@@ -67,6 +69,14 @@ exports.deleteComment = async (req, res) => {
     }
 
     await commentModel.findByIdAndDelete(req.params.commentId)
+
+
+    await recipeModel.findByIdAndUpdate(req.params.id, {
+      $pull : {
+        comments : req.params.commentId
+      }
+    })
+
     response.statusOk(res, `comment with id ${req.params.commentId} successfully deleted`)
   } catch(error){
     response.statusBadGateway(res, [error.message || "some errors occurred when trying to delete comment"])

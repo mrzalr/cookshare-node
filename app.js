@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     cb(null, "images")
   },
   filename: function(req, file, cb){
-    cb(null, `${file.originalname}-${new Date().getTime()}`)
+    cb(null, `${new Date().getTime()}-${file.originalname}`)
   }
 })
 
@@ -37,6 +37,7 @@ const port = process.env.SERVER_PORT || 8000
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use("/public/images", express.static("images"))
 app.use(upload.single("image"))
 
 require("./app/routers/auth.router")(app)

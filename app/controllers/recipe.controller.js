@@ -101,34 +101,3 @@ exports.deleteRecipe = async (req, res) => {
     response.statusBadGateway(res, [error.message || "some errors occurred when trying to delete recipes"])
   }
 }
-
-exports.uploadImage = async (req, res) => {
-  if(!req.file) {
-    response.statusUnprocessable(res, "image should not be empty")
-    return
-  }
-
-  try{
-    const foundRecipes = await recipeModel.findById(req.params.id)
-    if(!foundRecipes){
-      response.statusNotFound(res, `recipe with id ${req.params.id} not found`)
-      return
-    }
-
-    const imageResponse = await imageModel.create({
-      url : req.file.path,
-      recipe : req.params.id,
-      isThumbnail : req.body.isThumbnail,
-    })
-
-    const recipeResponse = await recipeModel.findByIdAndUpdate(req.params.id, {
-      $push : {
-        images : imageResponse._id
-      }
-    }, {new: true})
-
-    response.statusOk(res, recipeResponse)
-  } catch(error){
-    response.statusBadGateway(res, [error.message || "some errors occurred when trying to upload image"])
-  }
-}
