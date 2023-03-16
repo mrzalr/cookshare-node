@@ -35,7 +35,10 @@ exports.addRecipe = async (req, res) => {
 
 exports.getRecipeByID = async (req, res) => {
   try{
-    const recipeResponse = await recipeModel.findById(req.params.id).populate("user", ["username","email"]).populate("images",["url", "isThumbnail"])
+    const recipeResponse = await recipeModel.findById(req.params.id).populate("user", ["username","email"])
+      .populate("images",["url", "isThumbnail"])
+      .populate("comments", ["user", "content"])
+
     if(!recipeResponse){
       response.statusNotFound(res, [`recipe with id ${req.params.id} not found`])
       return
@@ -49,7 +52,10 @@ exports.getRecipeByID = async (req, res) => {
 
 exports.getRecipes = async (req, res) => {
   try{
-    const recipesResponse = await recipeModel.find().populate("user", ["username","email"]).populate("images",["url", "isThumbnail"])
+    const recipesResponse = await recipeModel.find().populate("user", ["username","email"])
+      .populate("images",["url", "isThumbnail"])
+      .populate("comments", ["user", "content"])
+
     response.statusOk(res, recipesResponse)
   } catch(error){
     response.statusBadGateway(res, [error.message || "some errors occurred when trying to get recipes"])
