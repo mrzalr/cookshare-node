@@ -58,7 +58,7 @@ exports.deleteImage = async (req, res) => {
 
     const foundImage = await imageModel.findById(req.params.imageId)
     if(!foundImage){
-      response.statusNotFound(res, `image with id ${req.params.id} not found`)
+      response.statusNotFound(res, `image with id ${req.params.imageId} not found`)
       return
     }
 
